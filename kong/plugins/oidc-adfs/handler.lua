@@ -1,8 +1,8 @@
 local BasePlugin = require "kong.plugins.base_plugin"
 local OidcHandler = BasePlugin:extend()
-local utils = require("kong.plugins.oidc.utils")
-local filter = require("kong.plugins.oidc.filter")
-local session = require("kong.plugins.oidc.session")
+local utils = require("kong.plugins.oidc-adfs.utils")
+local filter = require("kong.plugins.oidc-adfs.filter")
+local session = require("kong.plugins.oidc-adfs.session")
 
 local cjson = require("cjson")
 
@@ -10,7 +10,7 @@ OidcHandler.PRIORITY = 1000
 
 
 function OidcHandler:new()
-  OidcHandler.super.new(self, "oidc")
+  OidcHandler.super.new(self, "oidc-adfs")
 end
 
 function OidcHandler:access(config)
@@ -19,7 +19,13 @@ function OidcHandler:access(config)
 
   if filter.shouldProcessRequest(oidcConfig) then
     session.configure(config)
-    handle(oidcConfig)
+
+    if filter.shouldErrorRequest(oidcConfig) then
+      utils.exit(ngx.HTTP_UNAUTHORIZED, "Unauthorized", ngx.HTTP_UNAUTHORIZED)
+    else
+      handle(oidcConfig)
+    end
+
   else
     ngx.log(ngx.DEBUG, "OidcHandler ignoring request, path: " .. ngx.var.request_uri)
   end
@@ -28,20 +34,34 @@ function OidcHandler:access(config)
 end
 
 function handle(oidcConfig)
-  local response
-  if oidcConfig.introspection_endpoint then
-    response = introspect(oidcConfig)
-    if response then
-      utils.injectUser(response)
-    end
-  end
 
-  if response == nil then
-    response = make_oidc(oidcConfig)
-    if response and response.user then
-      utils.injectUser(response.user)
-      local userinfo = cjson.encode(response.user)
-      ngx.req.set_header("X-Userinfo", ngx.encode_base64(userinfo))
+  local headers = ngx.req.get_headers()
+  local header =  headers['Authorization']
+  if header == nil or header:find(" ") == nil then
+
+    local response
+    if oidcConfig.introspection_endpoint then
+      response = introspect(oidcConfig)
+      if response then
+        utils.injectUser(response)
+      end
+    end
+
+    if response == nil then
+      response = make_oidc(oidcConfig)
+
+      ngx.req.set_header("Authorization", "Bearer " .. response.access_token)
+      ngx.log(ngx.ERR, "BEARER TOKEN: " .. response.access_token)
+      if response and response.id_token and oidcConfig.use_id_token_for_userinfo then
+        local userinfo = cjson.encode(response.id_token)
+        ngx.req.set_header("X-Userinfo", ngx.encode_base64(userinfo))
+      end
+
+      if response and response.user then
+        utils.injectUser(response.user)
+        local userinfo = cjson.encode(response.user)
+        ngx.req.set_header("X-Userinfo", ngx.encode_base64(userinfo))
+      end
     end
   end
 end

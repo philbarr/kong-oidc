@@ -16,6 +16,10 @@ return {
     recovery_page_path = { type = "string" },
     logout_path = { type = "string", required = false, default = '/logout' },
     redirect_after_logout_uri = { type = "string", required = false, default = '/' },
-    filters = { type = "string" }
+    filters = { type = "string" },
+    slack = { type = "number", required = false },
+    relying_party_trust_id = { type = "string", required = false},
+    auth_error_filter = { type = "string", required = false},
+    use_id_token_for_userinfo = { type = "boolean", default = false }
   }
 }

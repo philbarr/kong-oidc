@@ -54,6 +54,12 @@ function M.get_options(config, ngx)
     filters = parseFilters(config.filters),
     logout_path = config.logout_path,
     redirect_after_logout_uri = config.redirect_after_logout_uri,
+    iat_slack=config.slack,
+    authorization_params={
+      resource=config.relying_party_trust_id,
+    },
+    use_id_token_for_userinfo = config.use_id_token_for_userinfo,
+    auth_error_filter = config.auth_error_filter
   }
 end
 
