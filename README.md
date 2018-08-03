@@ -16,6 +16,12 @@ Problems discovered when trying to use Kong OIDC with ADFS:
 | `use_id_token_for_userinfo` | false | false | should the plugin pass the claims in id_token in the X-Userinfo header |
 | `auth_error_filter` |  | false | filters (regex) matched against the entire request URL that will force the plugin to report a 401 unauthorized |
 
+### Installation
+If using luarocks (like you should), this plugin has been published to the luarocks repository, and can be installed using:
+```
+luarocks install kong-oidc-adfs
+```
+
 Original README.MD from the kong-oidc plugin included below for convenience.
 
 # What is Kong OIDC plugin
