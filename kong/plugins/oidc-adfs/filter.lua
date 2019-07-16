@@ -15,7 +15,10 @@ function M.shouldProcessRequest(config)
 end
 
 function M.shouldErrorRequest(config)
-  return not (string.find(ngx.var.request_uri, config.auth_error_filter) == nil)
+  if (config.auth_error_filter) then 
+    return not (string.find(ngx.var.request_uri, config.auth_error_filter) == nil)
+  end
+  return false
 end
 
 return M
