@@ -1,8 +1,8 @@
 package = "kong-oidc-adfs"
-version = "0.1-0"
+version = "0.3-0"
 source = {
     url = "git://github.com/philbarr/kong-oidc-adfs",
-    tag = "v0.1",
+    tag = "v0.3",
     dir = "kong-oidc-adfs"
 }
 description = {
@@ -24,7 +24,7 @@ description = {
     license = "Apache 2.0"
 }
 dependencies = {
-    "lua-resty-openidc ~> 1.6.0"
+    "lua-resty-openidc ~> 1.7.2"
 }
 build = {
     type = "builtin",
