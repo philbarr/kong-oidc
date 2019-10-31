@@ -58,6 +58,10 @@ function M.get_options(config, ngx)
     authorization_params={
       resource=config.relying_party_trust_id,
     },
+    proxy_opts = {
+      http_proxy  = config.http_proxy,
+      https_proxy = config.https_proxy
+    },
     use_id_token_for_userinfo = config.use_id_token_for_userinfo,
     auth_error_filter = config.auth_error_filter
   }

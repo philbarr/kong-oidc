@@ -20,6 +20,8 @@ return {
     slack = { type = "number", required = false },
     relying_party_trust_id = { type = "string", required = false},
     auth_error_filter = { type = "string", required = false},
-    use_id_token_for_userinfo = { type = "boolean", default = false }
+    use_id_token_for_userinfo = { type = "boolean", default = false },
+    http_proxy = { type = "string", required = false, default = '' },
+    https_proxy = { type = "string", required = false, default = '' }
   }
 }

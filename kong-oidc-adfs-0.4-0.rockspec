@@ -1,8 +1,8 @@
 package = "kong-oidc-adfs"
-version = "0.3-0"
+version = "0.4-0"
 source = {
     url = "git://github.com/philbarr/kong-oidc-adfs",
-    tag = "v0.3",
+    tag = "v0.4",
     dir = "kong-oidc-adfs"
 }
 description = {
